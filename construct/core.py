@@ -1407,5 +1407,58 @@ class ULInt24(StaticField):
             raise FieldError(ex)
 
 
+class ByteRange(Construct):
+    """
+    A variable-sized construct to collect raw data of an unknown size into
+    a simple str (Python 2) or bytes (Python 3) object. ByteRange avoids
+    converting data into a list of numbers, as it would be the case with Range
+    macro. TODO: link to Range.
 
+    .. seealso: if you can determine size of the field, use MetaField (TODO: link)
 
+    FieldError exception will be thrown if:
+
+    * while parsing, there's less than `minimum` bytes of data in the input
+      stream,
+
+    * while serializing, there's less than `minimum` bytes of data in the passed
+      input,
+
+    * while serializing, there's more than `maximum` bytes of data in the passed
+      input.
+
+    Example: a TFTP data packet contains a data field that may contain payload
+    of size anywhere between 0 and 512 bytes. Its size is determined by the size
+    of the UDP packet::
+
+        Struct("TFTPData",
+            Const(UBInt16("type"), 3),
+            UBInt16("idx"),
+            ByteRange("data", 0, 512),
+            Terminator)
+    
+    TODO: add documentation to sphinx
+    """
+    def __init__(self, name, minimum, maximum):
+        super(ByteRange, self).__init__(name)
+        self.minimum = minimum
+        self.maximum = maximum
+
+    def _parse(self, stream, context):
+        data = stream.read(self.maximum)
+        if len(data) < self.minimum:
+            raise FieldError("Expected at least %d bytes, got just %d." %
+                             (self.minimum, len(data)))
+        return data
+
+    def _build(self, obj, stream, context):
+        if len(obj) < self.minimum:
+            raise FieldError("Expected at least %d bytes, got just %d." %
+                             (self.minimum, len(obj)))
+        if len(obj) > self.maximum:
+            raise FieldError("Expected at most %d bytes, got %d." %
+                             (self.maximum, len(obj)))
+        stream.write(obj)
+
+    def _sizeof(self, context):
+        raise SizeofError()

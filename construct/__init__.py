@@ -18,9 +18,9 @@ Hands-on example:
     b"\\x01\\x02\\x03"
 """
 
-from construct.core import (AdaptationError, Adapter, Anchor, ArrayError, Buffered, Construct, ConstructError, 
-    Container, FieldError, FormatField, LazyBound, LazyContainer, ListContainer, MetaArray, MetaField, OnDemand, 
-    OverwriteError, Packer, Pass, Peek, Pointer, Range, RangeError, Reconfig, RepeatUntil, Restream, Select, 
+from construct.core import (AdaptationError, Adapter, Anchor, ArrayError, Buffered, ByteRange, Construct,
+    ConstructError, Container, FieldError, FormatField, LazyBound, LazyContainer, ListContainer, MetaArray, MetaField,
+    OnDemand, OverwriteError, Packer, Pass, Peek, Pointer, Range, RangeError, Reconfig, RepeatUntil, Restream, Select, 
     SelectError, Sequence, SizeofError, StaticField, Struct, Subconstruct, Switch, SwitchError, Terminator, 
     TerminatorError, ULInt24, Union, Value)
 from construct.adapters import (BitIntegerAdapter, BitIntegerError, CStringAdapter, ConstAdapter, ConstError, 
